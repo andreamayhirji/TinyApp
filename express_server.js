@@ -70,11 +70,12 @@ app.post('/urls', (req, res) => {
     var longURL = req.body.longURL;
     urlDatabase[shortURL] = longURL;
     // this logs my url database so I can see anything in there that's been posted.
-    // console.log(urlDatabase);
     res.redirect('/urls');
     //console.log(req.body); // debug statement to see POST parameters
     //res.send('Ok'); // Respond with 'Ok' (we will replace this)
 });
+// console.log(urlDatabase);
+
 
 //redirect to a new page (the acutal URL page) with the shortURL
 app.get('/u/:shortURL', (req, res) => {
@@ -94,9 +95,15 @@ app.post('/urls/:id/delete', (req, res) => {
     res.redirect('/urls');
 });
 
-//Update a url
+//POST the updated url 
 
-app.post('/urls:id', (req, res) => {
+app.post('/urls/:id', (req, res) => {
+
+let longURL = req.body.longURL;
+
+let shortURL = req.params.id;
+
+urlDatabase[shortURL] = longURL;
 
     res.redirect('/urls');
 });
@@ -126,3 +133,4 @@ app.get('/hello', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Example app listening on port ${PORT}!`);
 });
+
