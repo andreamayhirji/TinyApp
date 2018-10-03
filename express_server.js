@@ -76,23 +76,28 @@ app.post('/urls', (req, res) => {
     //res.send('Ok'); // Respond with 'Ok' (we will replace this)
 });
 
-//redirect to a new page with the shortURL
+//redirect to a new page (the acutal URL page) with the shortURL
 app.get('/u/:shortURL', (req, res) => {
     var shortURL = req.params.shortURL;
     var longURL = urlDatabase[shortURL];
     res.redirect(longURL);
 });
 
-// POST route that removes a URL resource
+// POST route that removes a URL resource and redirects to the urls page with the removed target id.
 
 app.post('/urls/:id/delete', (req, res) => {
     // 1. get the target id
     let targetId = req.params.id;
     delete urlDatabase[targetId];
-    
-  
 
     // 3. Redirect to the url list
+    res.redirect('/urls');
+});
+
+//Update a url
+
+app.post('/urls:id', (req, res) => {
+
     res.redirect('/urls');
 });
 

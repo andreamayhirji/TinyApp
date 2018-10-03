@@ -10,8 +10,10 @@
    <!-- Add your EJS code here -->
 <h1>These are my shortened URLs with the corresponding long URLs</h1>
 <% for(var url in urls) { %>
-<li>
-  <%= url%> &rarr; <a href=#><%= urls[url] %></a> <form style="display: inline-block;" method="POST" action="/urls/<%=url %>/delete"> 
+<li style="padding:10px;">
+  <%= url%> &rarr; <a href=<%= urls[url] %>><%= urls[url] %></a>
+  <a style="margin:10px;" href=#>Update</a>
+  <form style="display: inline-block;" method="POST" action="/urls/<%=url %>/delete"> 
   <button type = "submit">delete</button>
 </form> 
 </li>
