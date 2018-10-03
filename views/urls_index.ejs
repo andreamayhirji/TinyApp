@@ -1,0 +1,17 @@
+<!-- The urls_index.ejs template is used to display all the URLs and their shortened forms -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>TinyApp</title>
+<% include partials/_header %>
+</head>
+<body>
+   <!-- Add your EJS code here -->
+<h1>These are my shortened URLs</h1>
+<% for(var url in urls) { %>
+<li><a href=#><%= urls[url] %></a></li>
+<% }; %>
+
+</body>
+</html> 
