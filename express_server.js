@@ -59,9 +59,10 @@ app.get('/urls/:id', (req, res) => {
     let templateVars = {
         shortURL: req.params.id,
         longURL: urlDatabase[req.params.id]
-    }
+    };
     res.render('urls_show', templateVars);
 });
+
 //We need to define the route that will match this POST request and handle it. Let's start with a simple definition that logs the request body and gives a dummy response.
 app.post('/urls', (req, res) => {
 
@@ -82,11 +83,24 @@ app.get('/u/:shortURL', (req, res) => {
     res.redirect(longURL);
 });
 
-// app.get('/u/:shortURL', (req, res) => {
-//     var longURL = req.params.shortURL;
-//     res.redirect(longURL);
-// });
+// POST route that removes a URL resource
 
+app.post('/urls/:id/delete', (req, res) => {
+    // 1. get the target id
+    let targetId = req.params.id;
+    delete urlDatabase[targetId];
+    
+  
+
+    // 3. Redirect to the url list
+    res.redirect('/urls');
+});
+
+
+
+
+
+// Reference code
 // app.get() is a function!
 app.get('/', (req, res) => {
     //  ^ registers a handler on the root path '/'     
@@ -102,6 +116,7 @@ app.get('/urls.json', (req, res) => {
 app.get('/hello', (req, res) => {
     res.send('<html><body>Hello <b>World</b></body></html>\n');
 });
+
 
 app.listen(PORT, () => {
     console.log(`Example app listening on port ${PORT}!`);
