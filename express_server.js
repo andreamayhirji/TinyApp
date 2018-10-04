@@ -10,7 +10,9 @@ const bodyParser = require('body-parser');
 //body-parser converts the body of data into an object.
 // comes in as req = a=b&x=y 
 //conversts to an object req = { "a":b, "x": y }
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 
 //This tells the Express app to use EJS as its templating engine.
 app.set('view engine', 'ejs');
@@ -26,12 +28,34 @@ function generateRandomString() {
     return string;
 };
 
+/* **************** DATABASES ************* */
 //urlDatabase is an object.
 var urlDatabase = {
     'b2xVn2': 'http://www.lighthouselabs.ca',
     '9sm5xK': 'http://www.google.com',
     '4ATLPk': 'http://microsoft.com'
 };
+
+//user database is an object
+const userDatabase = {
+    'user1RandomId': {
+        userId: 'user1RandomId',
+        email: 'user@example.com',
+        password: 'purple-monkey-dinosaur'
+    },
+    'user2RandomId': {
+        userId: 'user2RandomId',
+        email: 'user2@example.com',
+        password: 'dishwasher-funk'
+    },
+    'boDVdD': {
+        userId: 'boDVdD',
+        email: 'andrea@andrea.com',
+        password: '1234'
+    }
+};
+
+
 
 //ADDING ROUTES 
 
@@ -42,6 +66,8 @@ app.get('/urls', (req, res) => {
         username: req.cookies["username"]
     };
     res.render('urls_index', templateVars);
+    console.log('LOOK FOR THIS:', req.cookies['userId']);
+
 });
 
 //Route Handler --> renders the form to generate a new shortURL by entering in a long url.
@@ -57,7 +83,7 @@ app.get('/urls/new', (req, res) => {
 
 //route handle for /urls/:id
 app.get('/urls/:id', (req, res) => {
-// previous way of writing this code:
+    // previous way of writing this code:
     // const shortURL = req.params.shortURL;
     // const longURL = urlDatabase[shortURL];
     // let templateVars = { shortURL: shortURL, longURL: longURL };
@@ -76,11 +102,9 @@ app.post('/urls', (req, res) => {
     var longURL = req.body.longURL;
     urlDatabase[shortURL] = longURL;
     res.redirect('/urls');
-    //console.log(req.body); // debug statement to see POST parameters
-    //res.send('Ok'); // Respond with 'Ok' (we will replace this)
+    console.log(urlDatabase);
 });
 // this logs my url database so I can see anything in there that's been posted.
-// console.log(urlDatabase);
 
 
 //redirect to a new page (the acutal URL page) using the shortURL
@@ -122,23 +146,32 @@ app.post('/login', function (req, res) {
 
 // POST route for logout
 app.post('/logout', function (req, res) {
-// Must include a clear cookie in order to remove the username
+    // Must include a clear cookie in order to remove the username
     res.clearCookie("username")
     res.redirect('/urls');
 });
 
-// GET route for /register
-app.get('/register', function(req, res) {
-    
+// GET route for /register page to show up
+app.get('/register', function (req, res) {
+
     res.render('register');
     // res.send('it works');
 });
 
-app.post('/register', function(req, res){
+// POST route for once register button has been clicke, redirect to /urls
+app.post('/register', function (req, res) {
 
-    
-    // res.send('here we go.')
-    // console.log('COOOL BEANS')
+    var randomUserId = generateRandomString();
+    //this sets up my database with the new randomUserId, and pulls the value  req.body.whatever into the appropriate keys.
+    userDatabase[randomUserId] = {
+        userId: randomUserId,
+        email: req.body['email'],
+        password: req.body['password']
+    }
+    //the cookie only needs to apply to my randomUserId since that is th object that contains the key value pairs I am looking for.
+    res.cookie('userId', randomUserId);
+    res.redirect('/urls');
+
 });
 
 
