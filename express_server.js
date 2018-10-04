@@ -28,12 +28,14 @@ function generateRandomString() {
     return string;
 };
 
+//function to check if the email entered in the registration matches an email in the database.
 function checkEmail(email) {
     for (const userId in userDatabase) {
         if (userDatabase[userId].email === email) {
             return true;
         }
     }
+    //REMINDER: return goes outside of the for in loop to ensure the for in loop keeps running.
     return false;
 }
 
@@ -71,8 +73,8 @@ const userDatabase = {
 //route handle for /urls, using the urlDatabase object.
 app.get('/urls', (req, res) => {
     let templateVars = {
-        urls: urlDatabase,
-        username: req.cookies["username"]
+        urls: urlDatabase, 
+        userId: req.cookies["userId"] /* changed "username" to "userId" */
     };
     res.render('urls_index', templateVars);
     // this is how I check what the userId is associated with the cookie.
@@ -85,7 +87,7 @@ app.get('/urls', (req, res) => {
 //this has to be above /url/:id
 app.get('/urls/new', (req, res) => {
     let templateVars = {
-        username: req.cookies["username"]
+        userId: req.cookies["userId"] /* changed "username" to "userId" */
     };
     res.render('urls_new', templateVars);
 });
@@ -100,7 +102,7 @@ app.get('/urls/:id', (req, res) => {
     let templateVars = {
         shortURL: req.params.id,
         longURL: urlDatabase[req.params.id],
-        username: req.cookies["username"]
+        userId: req.cookies["userId"] /* changed "username" to "userId" */
     };
     res.render('urls_show', templateVars);
 });
@@ -112,10 +114,8 @@ app.post('/urls', (req, res) => {
     var longURL = req.body.longURL;
     urlDatabase[shortURL] = longURL;
     res.redirect('/urls');
-    console.log(urlDatabase);
+    // console.log(urlDatabase);
 });
-// this logs my url database so I can see anything in there that's been posted.
-
 
 //redirect to a new page (the acutal URL page) using the shortURL
 app.get('/u/:shortURL', (req, res) => {
@@ -149,7 +149,7 @@ app.post('/urls/:id', (req, res) => {
 
 // POST route to store the username in cookies 
 app.post('/login', function (req, res) {
-    res.cookie("username", req.body.username);
+    res.cookie("userId", req.body.username); /* changed "username" to "userId" ... maybe req.body.username is wrong, not sure? */ 
     res.redirect('/urls');
 });
 
@@ -157,7 +157,7 @@ app.post('/login', function (req, res) {
 // POST route for logout
 app.post('/logout', function (req, res) {
     // Must include a clear cookie in order to remove the username
-    res.clearCookie("username")
+    res.clearCookie("userId"); /* changed "username" to "userId" */
     res.redirect('/urls');
 });
 
