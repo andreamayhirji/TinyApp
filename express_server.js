@@ -1,6 +1,13 @@
 var express = require('express');
 var app = express();
+
+//cookie-parser
+var cookieParser = require('cookie-parser');
+app.use(cookieParser());
+
 var PORT = 8080; //default port 8080
+
+//body-parser
 const bodyParser = require('body-parser');
 
 //body-parser converts the body of data into an object.
@@ -79,9 +86,11 @@ app.post('/urls', (req, res) => {
 
 //redirect to a new page (the acutal URL page) with the shortURL
 app.get('/u/:shortURL', (req, res) => {
+    //1. what is my 
     var shortURL = req.params.shortURL;
     var longURL = urlDatabase[shortURL];
     res.redirect(longURL);
+
 });
 
 // POST route that removes a URL resource and redirects to the urls page with the removed target id.
