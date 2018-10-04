@@ -13,7 +13,9 @@ const bodyParser = require('body-parser');
 //body-parser converts the body of data into an object.
 // comes in as req = a=b&x=y 
 //conversts to an object req = { "a":b, "x": y }
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 
 //This tells the Express app to use EJS as its templating engine.
 app.set('view engine', 'ejs');
@@ -24,12 +26,10 @@ function generateRandomString() {
     var options = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
     for (var i = 0; i < 6; i++) {
-        string += options.charAt(Math.floor(Math.random()*options.length))};
+        string += options.charAt(Math.floor(Math.random() * options.length))
+    };
     return string;
 };
-// console.log(generateRandomString());
-
-
 
 //urlDatabase is an object.
 var urlDatabase = {
@@ -38,14 +38,13 @@ var urlDatabase = {
     '4ATLPk': 'http://microsoft.com'
 };
 
-
-
 //adding routes... 
 
 //route handle for /urls, using the urlDatabase object.
 app.get('/urls', (req, res) => {
     let templateVars = {
-        urls: urlDatabase
+        urls: urlDatabase,
+        username: req.cookies["username"]
     };
     res.render('urls_index', templateVars);
 });
@@ -54,7 +53,10 @@ app.get('/urls', (req, res) => {
 //in case of overlap, routes should be ordered from most specific to least specific.
 //this has to be above /url/:id
 app.get('/urls/new', (req, res) => {
-    res.render('urls_new');
+    let templateVars = {
+        username: req.cookies["username"]
+    };
+    res.render('urls_new', templateVars);
 });
 
 
@@ -65,14 +67,14 @@ app.get('/urls/:id', (req, res) => {
     // let templateVars = { shortURL: shortURL, longURL: longURL };
     let templateVars = {
         shortURL: req.params.id,
-        longURL: urlDatabase[req.params.id]
+        longURL: urlDatabase[req.params.id],
+        username: req.cookies["username"]
     };
     res.render('urls_show', templateVars);
 });
 
 //We need to define the route that will match this POST request and handle it. Let's start with a simple definition that logs the request body and gives a dummy response.
 app.post('/urls', (req, res) => {
-
     var shortURL = generateRandomString();
     var longURL = req.body.longURL;
     urlDatabase[shortURL] = longURL;
@@ -84,13 +86,11 @@ app.post('/urls', (req, res) => {
 // console.log(urlDatabase);
 
 
-//redirect to a new page (the acutal URL page) with the shortURL
+//redirect to a new page (the acutal URL page) using the shortURL
 app.get('/u/:shortURL', (req, res) => {
-    //1. what is my 
     var shortURL = req.params.shortURL;
     var longURL = urlDatabase[shortURL];
     res.redirect(longURL);
-
 });
 
 // POST route that removes a URL resource and redirects to the urls page with the removed target id.
@@ -98,6 +98,8 @@ app.get('/u/:shortURL', (req, res) => {
 app.post('/urls/:id/delete', (req, res) => {
     // 1. get the target id
     let targetId = req.params.id;
+
+    // 2. delete the targetId from the urlDatabase.
     delete urlDatabase[targetId];
 
     // 3. Redirect to the url list
@@ -108,12 +110,17 @@ app.post('/urls/:id/delete', (req, res) => {
 
 app.post('/urls/:id', (req, res) => {
 
-let longURL = req.body.longURL;
+    let longURL = req.body.longURL;
+    let shortURL = req.params.id;
+    urlDatabase[shortURL] = longURL;
+    res.redirect('/urls');
+});
 
-let shortURL = req.params.id;
-
-urlDatabase[shortURL] = longURL;
-
+// using cookies base 
+app.post('/login', function (req, res) { 
+    // res.cookie(name, value);
+    res.cookie("username", req.body.username);
+    // console.log('Cookies: ', req.cookies)
     res.redirect('/urls');
 });
 
@@ -121,7 +128,7 @@ urlDatabase[shortURL] = longURL;
 
 
 
-// Reference code
+// Reference code for fun.
 // app.get() is a function!
 app.get('/', (req, res) => {
     //  ^ registers a handler on the root path '/'     
@@ -139,7 +146,7 @@ app.get('/hello', (req, res) => {
 });
 
 
+//required on all server files.
 app.listen(PORT, () => {
     console.log(`Example app listening on port ${PORT}!`);
 });
-
