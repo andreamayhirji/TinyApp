@@ -125,6 +125,12 @@ app.post('/login', function (req, res) {
 });
 
 
+// POST route for logout
+app.post('/logout', function (req, res) {
+    res.clearCookie("username")
+    res.redirect('/urls');
+});
+
 
 
 

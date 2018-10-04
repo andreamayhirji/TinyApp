@@ -1,26 +1,48 @@
 <!-- views/partials/header.ejs -->
 
 <header>
-<title>header</title>
+    <title>header</title>
 </header>
 
 <body>
- 
 
-    <% if(!username) { %>
-            <form action="/login" method="POST" >
-            <label for="username">Login</label>
-            <input id="username" type="text" name="username" placeholder="Enter your username" style="width: 200px">
-            <input type="submit" value="Submit">
-        </form>
+    <!-- if username does not exist, display the login form. Else, return username -->
+   <!-- <% if(!username) { %>
+    <form action="/login" method="POST">
+        <label for="username">Login</label>
+        <input id="username" type="text" name="username" placeholder="Enter your username" style="width: 200px">
+        <input type="submit" value="Submit">
+    </form>
     <% } else { %>
+    <p style="display: inline-block;">
+        <%= username %>
+    </p>
 
-        <p><%= username %></p>
-    <%};%>
+    <form style="display: inline-block;" action="/logout" method="POST">
+        <input name="logout" type="submit" value="logout">
+    </form>
+
+    <%};%> --> 
+
+    <!-- if username exists, display username and logout button, else only show login form -->
+
+<% if(username) { %>
+    <p style="display: inline-block;">
+        <%= username %>
+    </p>
+
+    <form style="display: inline-block;" action="/logout" method="POST">
+        <input name="logout" type="submit" value="logout">
+    </form>
+
+    <% } else  { %>
+    <form action="/login" method="POST">
+        <label for="username">Login</label>
+        <input id="username" type="text" name="username" placeholder="Enter your username" style="width: 200px">
+        <input type="submit" value="Submit">
+    </form>
+
+    <% };%>
 
 
 </body>
-
-
-
-
