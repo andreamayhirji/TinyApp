@@ -5,10 +5,22 @@
 </header>
 
 <body>
-    <form style="display: inline-block;" action="/login" method="POST" >
-        <label for="username">Login</label>
-        <input id="username" type="text" name="username" placeholder="Enter your username" style="width: 200px">
-        <input type="submit" value="Submit">
-    </form>
-    <p><%= username %></p>
+ 
+
+    <% if(!username) { %>
+            <form action="/login" method="POST" >
+            <label for="username">Login</label>
+            <input id="username" type="text" name="username" placeholder="Enter your username" style="width: 200px">
+            <input type="submit" value="Submit">
+        </form>
+    <% } else { %>
+
+        <p><%= username %></p>
+    <%};%>
+
+
 </body>
+
+
+
+
