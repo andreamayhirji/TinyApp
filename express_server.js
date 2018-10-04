@@ -28,6 +28,15 @@ function generateRandomString() {
     return string;
 };
 
+function checkEmail(email) {
+    for (const userId in userDatabase) {
+        if (userDatabase[userId].email === email) {
+            return true;
+        }
+    }
+    return false;
+}
+
 /* **************** DATABASES ************* */
 //urlDatabase is an object.
 var urlDatabase = {
@@ -57,7 +66,7 @@ const userDatabase = {
 
 
 
-//ADDING ROUTES 
+/* *********** ADDING ROUTES *********** */
 
 //route handle for /urls, using the urlDatabase object.
 app.get('/urls', (req, res) => {
@@ -66,7 +75,8 @@ app.get('/urls', (req, res) => {
         username: req.cookies["username"]
     };
     res.render('urls_index', templateVars);
-    console.log('LOOK FOR THIS:', req.cookies['userId']);
+    // this is how I check what the userId is associated with the cookie.
+    // console.log('LOOK FOR THIS:', req.cookies['userId']);
 
 });
 
@@ -155,11 +165,23 @@ app.post('/logout', function (req, res) {
 app.get('/register', function (req, res) {
 
     res.render('register');
-    // res.send('it works');
 });
 
 // POST route for once register button has been clicke, redirect to /urls
 app.post('/register', function (req, res) {
+
+    // this is guarding my code, I'm first checking if the data is good data.
+    if (req.body['email'] === "" || req.body['password'] === '') {
+        res.status(400).send('You need to enter and email address and a password.');
+        return;
+    }
+    if (checkEmail(req.body['email'])) {
+        res.status(400).send('this email has already been registered.');
+        console.log('error');
+        return;
+    }
+    // once the above two return false, I can do the normal thing below.
+    // I know my data is good, so I can perform the function.
 
     var randomUserId = generateRandomString();
     //this sets up my database with the new randomUserId, and pulls the value  req.body.whatever into the appropriate keys.
@@ -168,8 +190,11 @@ app.post('/register', function (req, res) {
         email: req.body['email'],
         password: req.body['password']
     }
+
     //the cookie only needs to apply to my randomUserId since that is th object that contains the key value pairs I am looking for.
     res.cookie('userId', randomUserId);
+
+    // console.log(userDatabase);
     res.redirect('/urls');
 
 });
@@ -179,7 +204,7 @@ app.post('/register', function (req, res) {
 
 
 
-// Reference code.
+/* ***************** Reference code ************** */
 // app.get() is a function!
 app.get('/', (req, res) => {
     //  ^ registers a handler on the root path '/'     
