@@ -62,6 +62,7 @@ app.get('/urls/new', (req, res) => {
 
 //route handle for /urls/:id
 app.get('/urls/:id', (req, res) => {
+// previous way of writing this code:
     // const shortURL = req.params.shortURL;
     // const longURL = urlDatabase[shortURL];
     // let templateVars = { shortURL: shortURL, longURL: longURL };
@@ -78,11 +79,11 @@ app.post('/urls', (req, res) => {
     var shortURL = generateRandomString();
     var longURL = req.body.longURL;
     urlDatabase[shortURL] = longURL;
-    // this logs my url database so I can see anything in there that's been posted.
     res.redirect('/urls');
     //console.log(req.body); // debug statement to see POST parameters
     //res.send('Ok'); // Respond with 'Ok' (we will replace this)
 });
+// this logs my url database so I can see anything in there that's been posted.
 // console.log(urlDatabase);
 
 
@@ -94,7 +95,6 @@ app.get('/u/:shortURL', (req, res) => {
 });
 
 // POST route that removes a URL resource and redirects to the urls page with the removed target id.
-
 app.post('/urls/:id/delete', (req, res) => {
     // 1. get the target id
     let targetId = req.params.id;
@@ -107,7 +107,6 @@ app.post('/urls/:id/delete', (req, res) => {
 });
 
 //POST the updated url 
-
 app.post('/urls/:id', (req, res) => {
 
     let longURL = req.body.longURL;
@@ -116,16 +115,15 @@ app.post('/urls/:id', (req, res) => {
     res.redirect('/urls');
 });
 
-// using cookies base 
-app.post('/login', function (req, res) { 
-    // res.cookie(name, value);
+// POST route to store the username in cookies 
+app.post('/login', function (req, res) {
     res.cookie("username", req.body.username);
-    // console.log('Cookies: ', req.cookies)
     res.redirect('/urls');
 });
 
 
 // POST route for logout
+// Must include a clear cookie in order to remove the username
 app.post('/logout', function (req, res) {
     res.clearCookie("username")
     res.redirect('/urls');
