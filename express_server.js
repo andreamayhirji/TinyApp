@@ -1,30 +1,25 @@
 var express = require('express');
 var app = express();
 
-//cookie-parser
 var cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
 var PORT = 8080; //default port 8080
 
-//body-parser
 const bodyParser = require('body-parser');
-
 //body-parser converts the body of data into an object.
 // comes in as req = a=b&x=y 
 //conversts to an object req = { "a":b, "x": y }
-app.use(bodyParser.urlencoded({
-    extended: true
-}));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 //This tells the Express app to use EJS as its templating engine.
 app.set('view engine', 'ejs');
 
+// TODO: refactor this code to use Math.random.splice()etc
 //Referenced this code from https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
 function generateRandomString() {
     var string = '';
     var options = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
     for (var i = 0; i < 6; i++) {
         string += options.charAt(Math.floor(Math.random() * options.length))
     };
@@ -38,7 +33,7 @@ var urlDatabase = {
     '4ATLPk': 'http://microsoft.com'
 };
 
-//adding routes... 
+//ADDING ROUTES 
 
 //route handle for /urls, using the urlDatabase object.
 app.get('/urls', (req, res) => {
@@ -49,7 +44,7 @@ app.get('/urls', (req, res) => {
     res.render('urls_index', templateVars);
 });
 
-//route handler to render the page with the form
+//Route Handler --> renders the form to generate a new shortURL by entering in a long url.
 //in case of overlap, routes should be ordered from most specific to least specific.
 //this has to be above /url/:id
 app.get('/urls/new', (req, res) => {
@@ -74,6 +69,7 @@ app.get('/urls/:id', (req, res) => {
     res.render('urls_show', templateVars);
 });
 
+//Route Handler: posts the new shortURL and longURL data on the /urls page.
 //We need to define the route that will match this POST request and handle it. Let's start with a simple definition that logs the request body and gives a dummy response.
 app.post('/urls', (req, res) => {
     var shortURL = generateRandomString();
@@ -95,6 +91,7 @@ app.get('/u/:shortURL', (req, res) => {
 });
 
 // POST route that removes a URL resource and redirects to the urls page with the removed target id.
+// delete action
 app.post('/urls/:id/delete', (req, res) => {
     // 1. get the target id
     let targetId = req.params.id;
@@ -107,6 +104,7 @@ app.post('/urls/:id/delete', (req, res) => {
 });
 
 //POST the updated url 
+// update action
 app.post('/urls/:id', (req, res) => {
 
     let longURL = req.body.longURL;
@@ -123,16 +121,32 @@ app.post('/login', function (req, res) {
 
 
 // POST route for logout
-// Must include a clear cookie in order to remove the username
 app.post('/logout', function (req, res) {
+// Must include a clear cookie in order to remove the username
     res.clearCookie("username")
     res.redirect('/urls');
+});
+
+// GET route for /register
+app.get('/register', function(req, res) {
+    
+    res.render('register');
+    // res.send('it works');
+});
+
+app.post('/register', function(req, res){
+
+    
+    // res.send('here we go.')
+    // console.log('COOOL BEANS')
 });
 
 
 
 
-// Reference code for fun.
+
+
+// Reference code.
 // app.get() is a function!
 app.get('/', (req, res) => {
     //  ^ registers a handler on the root path '/'     
