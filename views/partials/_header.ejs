@@ -16,14 +16,10 @@
     <form style="display: inline-block;" action="/logout" method="POST">
         <input name="logout" type="submit" value="logout">
     </form>
-
+<!-- Return the registration link if not logged in -->
     <% } else  { %>
-    <form action="/login" method="POST">
-        <label for="username">Login</label>
-        <input id="username" type="text" name="username" placeholder="Enter your username" style="width: 200px">
-        <input type="submit" value="Submit">
-    </form>
-
+    <p><a href="/register">Register</a></p>
     <% };%>
+
 
 </body>

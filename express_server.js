@@ -182,7 +182,6 @@ app.get('/register', function (req, res) {
 
 // POST route for once register button has been clicke, redirect to /urls
 app.post('/register', function (req, res) {
-
     // this is guarding my code, I'm first checking if the data is good data.
     if (req.body['email'] === "" || req.body['password'] === '') {
         res.status(400).send('You need to enter and email address and a password.');
@@ -195,7 +194,6 @@ app.post('/register', function (req, res) {
     }
     // once the above two return false, I can do the normal thing below.
     // I know my data is good, so I can perform the function.
-
     let randomUserId = generateRandomString();
     //this sets up my database with the new randomUserId, and pulls the value  req.body.whatever into the appropriate keys.
     userDatabase[randomUserId] = {
@@ -203,14 +201,28 @@ app.post('/register', function (req, res) {
         email: req.body['email'],
         password: req.body['password']
     }
-
     //the cookie only needs to apply to my randomUserId since that is th object that contains the key value pairs I am looking for.
     res.cookie('userId', randomUserId);
-
-    // console.log(userDatabase);
     res.redirect('/urls');
 
 });
+
+
+// GET route for /login page 
+app.get('/login', function (req, res) {
+    let templateVars = {
+        user: getUser(req)
+    };
+    res.render('login', templateVars);
+    // console.log('hey');
+});
+
+
+
+
+
+
+
 
 
 

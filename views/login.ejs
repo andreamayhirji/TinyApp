@@ -1,0 +1,43 @@
+<body>
+    <h1>Welcome to TinyApp</h1>
+    <h2>Please login with you username and password below</h2>
+
+    <% if(user) { %>
+    <p style="display: inline-block;">
+        <%= user.email %>
+    </p>
+
+    <form style="display: inline-block;" action="/logout" method="POST">
+        <input name="logout" type="submit" value="logout">
+    </form>
+
+    <% } else  { %>
+    <form action="/login" method="POST">
+        <label for="username">Login</label>
+        <input id="username" type="text" name="username" placeholder="Enter your username" style="width: 200px">
+        <input type="submit" value="Submit">
+    </form>
+
+    <% };%>
+
+
+<!--
+    <form action="/login" method="POST" style="padding:10px">
+
+        <div style="margin:10px">
+            <label for="email">Email Address</label>
+            <input id="email" type="email" name="email" style="width: 200px">
+        </div>
+        <div style="margin:10px">    
+            <label for="password">Password</label>
+            <input id="password" type="password" name="password" style="width: 200px">
+        </div>
+        <div style="margin:10px">
+            <input type="submit" value="Login">
+        </div>
+    </form>
+-->
+
+</body>
+
+</html>
