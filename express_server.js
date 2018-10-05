@@ -167,12 +167,6 @@ app.post('/urls/:id', (req, res) => {
     res.redirect('/urls');
 });
 
-// // POST route to store the username in cookies 
-// app.post('/login', function (req, res) {
-//     res.cookie("userId", req.body.username); 
-//     res.redirect('/urls');
-// });
-
 
 // POST route for logout
 app.post('/logout', function (req, res) {
@@ -229,7 +223,7 @@ app.get('/login', function (req, res) {
 app.post('/login', function (req, res) {
     // res.cookie("userId", req.body.username); 
     //?
-    let email = req.body.email;
+    let email = req.body.userId;
     let password = req.body.password;
 
     if (password === '' || email === '') {
@@ -241,22 +235,20 @@ app.post('/login', function (req, res) {
             if (userDatabase[userId].password === password && userDatabase[userId].email === email) {
                 res.cookie("userId", userId);
                 res.redirect('/urls');
+                return;
             } 
         } 
-        res.status(400).send('Your password and username do not match.');
+        res.status(400);
+        res.send('Your password and username do not match.');
     } 
 
 });
 
-
-
-
-
-
-
-
-
-
+// // POST route to store the username in cookies 
+// app.post('/login', function (req, res) {
+//     res.cookie("userId", req.body.username); 
+//     res.redirect('/urls');
+// });
 
 
 
