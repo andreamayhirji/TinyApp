@@ -82,6 +82,7 @@ app.get('/urls', (req, res) => {
 
     let templateVars = {
         urls: urlDatabase,
+        // TODO:  can merge these into one. user: userDatabase[userId]. it will get rid of user and userId.
         user: userDatabase,
         userId: userId,
     };
@@ -119,7 +120,7 @@ app.get('/urls/:id', (req, res) => {
     let templateVars = {
         shortURL: req.params.id,
         longURL: urlDatabase[req.params.id],
-        urls: urlDatabase,
+        urls: urlDatabase,      // TODO: delete this line?
         user: userDatabase,
         userId: userId,
     };
@@ -177,7 +178,7 @@ app.post('/urls/:id', (req, res) => {
 app.post('/logout', function (req, res) {
     // Must include a clear cookie in order to remove the username
     res.clearCookie("userId"); /* changed "username" to "userId" */
-    res.redirect('/urls');
+    res.redirect('/login');
 });
 
 // GET route for /register page to show up
@@ -189,12 +190,11 @@ app.get('/register', function (req, res) {
 app.post('/register', function (req, res) {
     // this is guarding my code, I'm first checking if the data is good data.
     if (req.body['email'] === "" || req.body['password'] === '') {
-        res.status(400).send('You need to enter and email address and a password.');
+        res.status(400).send('You need to enter an email address and a password.');
         return;
     }
     if (checkEmail(req.body['email'])) {
-        res.status(400).send('this email has already been registered.');
-        console.log('error');
+        res.status(400).send('This email has already been registered.');
         return;
     }
     // once the above two return false, I can do the normal thing below.
@@ -203,7 +203,7 @@ app.post('/register', function (req, res) {
     //this sets up my database with the new randomUserId, and pulls the value  req.body.whatever into the appropriate keys.
     userDatabase[randomUserId] = {
         userId: randomUserId,
-        email: req.body['email'],
+        email: req.body['email'], /* this could be req.body.email i think */
         password: req.body['password']
     }
     //the cookie only needs to apply to my randomUserId since that is th object that contains the key value pairs I am looking for.
@@ -217,7 +217,6 @@ app.post('/register', function (req, res) {
 app.get('/login', function (req, res) {
     let userId = req.cookies["userId"]
     let templateVars = {
-        urls: urlDatabase,
         user: userDatabase,
         userId: userId,
     };
@@ -232,16 +231,16 @@ app.post('/login', function (req, res) {
     //?
     let email = req.body.username;
     let password = req.body.password;
-    let userId = userDatabase
 
-    if (password === '' && email === '') {
+    if (password === '' || email === '') {
         console.error('no way');
         res.send('You have to enter an email and a password');
         return;
     } else {
-        for (let keys in userDatabase) {
-            if (userDatabase[keys].password === password && userDatabase[keys].email === email) {
-                res.cookie("userId", keys).redirect('/urls');
+        for (let userId in userDatabase) {
+            if (userDatabase[userId].password === password && userDatabase[userId].email === email) {
+                res.cookie("userId", userId);
+                res.redirect('/urls');
             } 
         } 
         res.status(400).send('Your password and username do not match.');
