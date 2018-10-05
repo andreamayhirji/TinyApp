@@ -229,7 +229,7 @@ app.get('/login', function (req, res) {
 app.post('/login', function (req, res) {
     // res.cookie("userId", req.body.username); 
     //?
-    let email = req.body.username;
+    let email = req.body.email;
     let password = req.body.password;
 
     if (password === '' || email === '') {

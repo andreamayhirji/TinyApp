@@ -13,10 +13,10 @@
     <% } else  { %>
     <form action="/login" method="POST">
         <div style="margin:10px">
-        <!-- I need to change the username to email but when I do it breaks. -->
-            <label for="username">Email</label>
-            <input id="username" type="email" name="username"  style="width: 200px">
-            
+            <!-- I need to change the username to userId but when I do it breaks. -->
+            <label for="email">Email</label>
+            <input id="email" type="email" name="email" style="width: 200px">
+
         </div>
         <div style="margin:10px">
             <label for="password">Password</label>
@@ -35,7 +35,7 @@
 </html>
 
 
-    <!-- I want to use this code, but when I do it breaks.
+<!-- I want to use this code, but when I do it breaks.
     <form action="/login" method="POST" style="padding:10px">
 
         <div style="margin:10px">
