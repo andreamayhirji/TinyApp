@@ -98,14 +98,18 @@ app.get('/urls', (req, res) => {
 //in case of overlap, routes should be ordered from most specific to least specific.
 //this has to be above /url/:id
 app.get('/urls/new', (req, res) => {
+
     let userId = req.cookies["userId"]
     let templateVars = {
         urls: urlDatabase,
         user: userDatabase,
         userId: userId,
     };
-    
-    res.render('urls_new', templateVars);
+    if(userId) {
+        res.render('urls_new', templateVars);
+    } else {
+        res.redirect('/login');
+    }
 });
 
 
