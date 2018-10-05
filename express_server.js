@@ -39,6 +39,12 @@ function checkEmail(email) {
     return false;
 }
 
+
+// let getUser = function (req) {
+//     return userDatabase[req.cookies["userId"]]
+// }
+
+
 /* **************** DATABASES ************* */
 //urlDatabase is an object.
 var urlDatabase = {
@@ -66,24 +72,18 @@ const userDatabase = {
     }
 };
 
-let getUser = function (req) {
-    return userDatabase[req.cookies["userId"]]
-}
 
 /* *********** ADDING ROUTES *********** */
 
 //route handle for /urls, using the urlDatabase object.
 app.get('/urls', (req, res) => {
 
-    // let userId = req.cookies["userId"]
-    // let user = userDatabase[userId]
-    // user: user
-
+    let userId = req.cookies["userId"]
 
     let templateVars = {
         urls: urlDatabase,
-        // user: userDatabase[req.cookies["userId"]]
-        user: getUser(req)
+        user: userDatabase,
+        userId: userId,
     };
     // console.log('user:', templateVars.user);
     // console.log('cookies:', req.cookies["userId"]);
@@ -97,10 +97,13 @@ app.get('/urls', (req, res) => {
 //in case of overlap, routes should be ordered from most specific to least specific.
 //this has to be above /url/:id
 app.get('/urls/new', (req, res) => {
+    let userId = req.cookies["userId"]
     let templateVars = {
-        user: getUser(req)
-        // username: req.cookies["userId"] /* changed "username" to "userId" */
+        urls: urlDatabase,
+        user: userDatabase,
+        userId: userId,
     };
+    
     res.render('urls_new', templateVars);
 });
 
@@ -111,11 +114,14 @@ app.get('/urls/:id', (req, res) => {
     // const shortURL = req.params.shortURL;
     // const longURL = urlDatabase[shortURL];
     // let templateVars = { shortURL: shortURL, longURL: longURL };
+    let userId = req.cookies["userId"]
+
     let templateVars = {
         shortURL: req.params.id,
         longURL: urlDatabase[req.params.id],
-        user: getUser(req)
-        // username: req.cookies["userId"] /* changed "username" to "userId" */
+        urls: urlDatabase,
+        user: userDatabase,
+        userId: userId,
     };
     res.render('urls_show', templateVars);
 });
@@ -160,11 +166,11 @@ app.post('/urls/:id', (req, res) => {
     res.redirect('/urls');
 });
 
-// POST route to store the username in cookies 
-app.post('/login', function (req, res) {
-    res.cookie("userId", req.body.username); /* changed "username" to "userId" ... maybe req.body.username is wrong, not sure? */
-    res.redirect('/urls');
-});
+// // POST route to store the username in cookies 
+// app.post('/login', function (req, res) {
+//     res.cookie("userId", req.body.username); 
+//     res.redirect('/urls');
+// });
 
 
 // POST route for logout
@@ -176,7 +182,6 @@ app.post('/logout', function (req, res) {
 
 // GET route for /register page to show up
 app.get('/register', function (req, res) {
-
     res.render('register');
 });
 
@@ -210,11 +215,38 @@ app.post('/register', function (req, res) {
 
 // GET route for /login page 
 app.get('/login', function (req, res) {
+    let userId = req.cookies["userId"]
     let templateVars = {
-        user: getUser(req)
+        urls: urlDatabase,
+        user: userDatabase,
+        userId: userId,
     };
+
     res.render('login', templateVars);
     // console.log('hey');
+});
+
+// POST route for /login page (also store the username in cookies)
+app.post('/login', function (req, res) {
+    // res.cookie("userId", req.body.username); 
+    //?
+    let email = req.body.username;
+    let password = req.body.password;
+    let userId = userDatabase
+
+    if (password === '' && email === '') {
+        console.error('no way');
+        res.send('You have to enter an email and a password');
+        return;
+    } else {
+        for (let keys in userDatabase) {
+            if (userDatabase[keys].password === password && userDatabase[keys].email === email) {
+                res.cookie("userId", keys).redirect('/urls');
+            } 
+        } 
+        res.status(400).send('Your password and username do not match.');
+    } 
+
 });
 
 

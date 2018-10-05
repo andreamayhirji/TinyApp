@@ -6,20 +6,17 @@
 
 <body>
 
-<!-- if username exists, display username and logout button, else only show login form -->
-
-<% if(user) { %>
+    <% if(userId) { %>
     <p style="display: inline-block;">
-        <%= user.email %>
+        <%= user[userId].email %>
     </p>
 
     <form style="display: inline-block;" action="/logout" method="POST">
         <input name="logout" type="submit" value="logout">
     </form>
-<!-- Return the registration link if not logged in -->
     <% } else  { %>
-    <p><a href="/register">Register</a></p>
-    <% };%>
+    <p><a href="/login">Login</a> or if you are not yet a user, <a href="/register">Register</a></p>
 
+    <% };%>
 
 </body>
