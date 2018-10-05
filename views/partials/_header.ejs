@@ -8,9 +8,9 @@
 
 <!-- if username exists, display username and logout button, else only show login form -->
 
-<% if(userId) { %>
+<% if(user) { %>
     <p style="display: inline-block;">
-        <%= userId %>
+        <%= user.email %>
     </p>
 
     <form style="display: inline-block;" action="/logout" method="POST">

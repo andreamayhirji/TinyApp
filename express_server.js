@@ -66,16 +66,27 @@ const userDatabase = {
     }
 };
 
-
+let getUser = function (req) {
+    return userDatabase[req.cookies["userId"]]
+}
 
 /* *********** ADDING ROUTES *********** */
 
 //route handle for /urls, using the urlDatabase object.
 app.get('/urls', (req, res) => {
+
+    // let userId = req.cookies["userId"]
+    // let user = userDatabase[userId]
+    // user: user
+
+
     let templateVars = {
-        urls: urlDatabase, 
-        userId: req.cookies["userId"] /* changed "username" to "userId" */
+        urls: urlDatabase,
+        // user: userDatabase[req.cookies["userId"]]
+        user: getUser(req)
     };
+    // console.log('user:', templateVars.user);
+    // console.log('cookies:', req.cookies["userId"]);
     res.render('urls_index', templateVars);
     // this is how I check what the userId is associated with the cookie.
     // console.log('LOOK FOR THIS:', req.cookies['userId']);
@@ -87,7 +98,8 @@ app.get('/urls', (req, res) => {
 //this has to be above /url/:id
 app.get('/urls/new', (req, res) => {
     let templateVars = {
-        userId: req.cookies["userId"] /* changed "username" to "userId" */
+        user: getUser(req)
+        // username: req.cookies["userId"] /* changed "username" to "userId" */
     };
     res.render('urls_new', templateVars);
 });
@@ -102,7 +114,8 @@ app.get('/urls/:id', (req, res) => {
     let templateVars = {
         shortURL: req.params.id,
         longURL: urlDatabase[req.params.id],
-        userId: req.cookies["userId"] /* changed "username" to "userId" */
+        user: getUser(req)
+        // username: req.cookies["userId"] /* changed "username" to "userId" */
     };
     res.render('urls_show', templateVars);
 });
@@ -149,7 +162,7 @@ app.post('/urls/:id', (req, res) => {
 
 // POST route to store the username in cookies 
 app.post('/login', function (req, res) {
-    res.cookie("userId", req.body.username); /* changed "username" to "userId" ... maybe req.body.username is wrong, not sure? */ 
+    res.cookie("userId", req.body.username); /* changed "username" to "userId" ... maybe req.body.username is wrong, not sure? */
     res.redirect('/urls');
 });
 
@@ -183,7 +196,7 @@ app.post('/register', function (req, res) {
     // once the above two return false, I can do the normal thing below.
     // I know my data is good, so I can perform the function.
 
-    var randomUserId = generateRandomString();
+    let randomUserId = generateRandomString();
     //this sets up my database with the new randomUserId, and pulls the value  req.body.whatever into the appropriate keys.
     userDatabase[randomUserId] = {
         userId: randomUserId,
@@ -220,7 +233,6 @@ app.get('/urls.json', (req, res) => {
 app.get('/hello', (req, res) => {
     res.send('<html><body>Hello <b>World</b></body></html>\n');
 });
-
 
 //required on all server files.
 app.listen(PORT, () => {
