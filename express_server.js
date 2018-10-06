@@ -98,20 +98,16 @@ const userDatabase = {
 app.get('/urls', (req, res) => {
 
     let userId = req.cookies["userId"]
-    let templateVars = {
-        urls: urlDatabase,
-        user: userDatabase[userId]
-    };
-
-    //pull the key (shortURL) and the value for the longURL
-
     if (userId) {
-        urlsForUser(req.cookies["userId"]);
-        // res.render('urls_index', templateVars);
-
-    } else {
-        res.send('You must login in to view this page');
-    }
+        let userSpecificURLDatabase = (urlsForUser(userId));
+        let templateVars = {
+            urls: userSpecificURLDatabase,
+            user: userDatabase[userId]
+        };
+        res.render('urls_index', templateVars);
+    }  else {
+    res.send('You must login in to view this page');
+}
 });
 
 //Route Handler --> renders the form to generate a new shortURL by entering in a long url.
@@ -142,7 +138,7 @@ app.get('/urls/:id', (req, res) => {
     let templateVars = {
         shortURL: req.params.id,
         longURL: urlDatabase[req.params.id],
-        urls: urlDatabase, // TODO: delete this line?
+        //urls: urlDatabase, // TODO: delete this line?
         user: userDatabase[userId],
     };
 
@@ -251,7 +247,6 @@ app.post('/login', function (req, res) {
     // res.cookie("userId", req.body.username); 
     let email = req.body.email;
     let password = req.body.password;
-    // console.log("req.body", req.body);
 
     if (password === '' || email === '') {
         console.error('no way');
@@ -259,7 +254,6 @@ app.post('/login', function (req, res) {
         return;
     } else {
         for (let userId in userDatabase) {
-            console.log('!!!', userId, userDatabase[userId]);
             if (userDatabase[userId].password === password && userDatabase[userId].email === email) {
                 res.cookie("userId", userId);
                 res.redirect('/urls');
