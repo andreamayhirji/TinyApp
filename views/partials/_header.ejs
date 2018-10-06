@@ -6,9 +6,9 @@
 
 <body>
 
-    <% if(userId) { %>
+    <% if(user) { %>
     <p style="display: inline-block;">
-        <%= user[userId].email %>
+    <%=  user.email %>
     </p>
 
     <form style="display: inline-block;" action="/logout" method="POST">

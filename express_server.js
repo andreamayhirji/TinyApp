@@ -48,10 +48,14 @@ function checkEmail(email) {
 /* **************** DATABASES ************* */
 //urlDatabase is an object.
 var urlDatabase = {
-    'b2xVn2': 'http://www.lighthouselabs.ca',
-    '9sm5xK': 'http://www.google.com',
-    '4ATLPk': 'http://microsoft.com'
-};
+    'b2xVn2': { longURL: 'http://www.lighthouselabs.ca', 
+                userId: 'user1RandomId'},
+    '9sm5xK': { longURL: 'http://www.google.com',
+                userId: 'user2RandomId'},
+    '4ATLPk': {longURL: 'http://microsoft.com',
+                userId: 'user1RandomId'}
+}
+
 
 //user database is an object
 const userDatabase = {
@@ -72,7 +76,6 @@ const userDatabase = {
     }
 };
 
-
 /* *********** ADDING ROUTES *********** */
 
 //route handle for /urls, using the urlDatabase object.
@@ -82,9 +85,8 @@ app.get('/urls', (req, res) => {
 
     let templateVars = {
         urls: urlDatabase,
-        // TODO:  can merge these into one. user: userDatabase[userId]. it will get rid of user and userId.
-        user: userDatabase,
-        userId: userId,
+        // urlUserSpecific: urls.userId,
+        user: userDatabase[userId]
     };
     // console.log('user:', templateVars.user);
     // console.log('cookies:', req.cookies["userId"]);
@@ -102,8 +104,7 @@ app.get('/urls/new', (req, res) => {
     let userId = req.cookies["userId"]
     let templateVars = {
         urls: urlDatabase,
-        user: userDatabase,
-        userId: userId,
+        user: userDatabase[userId],
     };
     if(userId) {
         res.render('urls_new', templateVars);
@@ -125,8 +126,7 @@ app.get('/urls/:id', (req, res) => {
         shortURL: req.params.id,
         longURL: urlDatabase[req.params.id],
         urls: urlDatabase,      // TODO: delete this line?
-        user: userDatabase,
-        userId: userId,
+        user: userDatabase[userId],
     };
     res.render('urls_show', templateVars);
 });
@@ -143,6 +143,7 @@ app.post('/urls', (req, res) => {
 
 //redirect to a new page (the acutal URL page) using the shortURL
 app.get('/u/:shortURL', (req, res) => {
+    //TODO: shortURL is not working, returns undefined.
     var shortURL = req.params.shortURL;
     var longURL = urlDatabase[shortURL];
     res.redirect(longURL);
@@ -227,8 +228,10 @@ app.get('/login', function (req, res) {
 app.post('/login', function (req, res) {
     // res.cookie("userId", req.body.username); 
     //?
-    let email = req.body.userId;
+    let email = req.body.email;
     let password = req.body.password;
+
+    console.log("req.body", req.body);
 
     if (password === '' || email === '') {
         console.error('no way');
@@ -236,6 +239,7 @@ app.post('/login', function (req, res) {
         return;
     } else {
         for (let userId in userDatabase) {
+            console.log('!!!', userId, userDatabase[userId]);
             if (userDatabase[userId].password === password && userDatabase[userId].email === email) {
                 res.cookie("userId", userId);
                 res.redirect('/urls');
