@@ -39,6 +39,17 @@ function checkEmail(email) {
     return false;
 }
 
+// Function to filter the urlDatabase and compare with the userId to the logged-in user's ID.
+function urlsForUser(userId) {
+    var urlsUserList = {};
+    for (const shortURL in urlDatabase) {
+        if (urlDatabase[shortURL].userId === userId) {
+            urlsUserList[shortURL] = urlDatabase[shortURL]
+        }
+    }
+    return urlsUserList;
+}
+
 
 // let getUser = function (req) {
 //     return userDatabase[req.cookies["userId"]]
@@ -48,12 +59,18 @@ function checkEmail(email) {
 /* **************** DATABASES ************* */
 //urlDatabase is an object.
 var urlDatabase = {
-    'b2xVn2': { longURL: 'http://www.lighthouselabs.ca', 
-                userId: 'user1RandomId'},
-    '9sm5xK': { longURL: 'http://www.google.com',
-                userId: 'user2RandomId'},
-    '4ATLPk': {longURL: 'http://microsoft.com',
-                userId: 'user1RandomId'}
+    'b2xVn2': {
+        longURL: 'http://www.lighthouselabs.ca',
+        userId: 'user1RandomId'
+    },
+    '9sm5xK': {
+        longURL: 'http://www.google.com',
+        userId: 'user2RandomId'
+    },
+    '4ATLPk': {
+        longURL: 'http://microsoft.com',
+        userId: 'user1RandomId'
+    }
 }
 
 //user database is an object
@@ -81,17 +98,20 @@ const userDatabase = {
 app.get('/urls', (req, res) => {
 
     let userId = req.cookies["userId"]
-
     let templateVars = {
         urls: urlDatabase,
         user: userDatabase[userId]
     };
-    // console.log('user:', templateVars.user);
-    // console.log('cookies:', req.cookies["userId"]);
-    res.render('urls_index', templateVars);
-    // this is how I check what the userId is associated with the cookie.
-    // console.log('LOOK FOR THIS:', req.cookies['userId']);
 
+    //pull the key (shortURL) and the value for the longURL
+
+    if (userId) {
+        urlsForUser(req.cookies["userId"]);
+        // res.render('urls_index', templateVars);
+
+    } else {
+        res.send('You must login in to view this page');
+    }
 });
 
 //Route Handler --> renders the form to generate a new shortURL by entering in a long url.
@@ -104,7 +124,7 @@ app.get('/urls/new', (req, res) => {
         urls: urlDatabase,
         user: userDatabase[userId],
     };
-    if(userId) {
+    if (userId) {
         res.render('urls_new', templateVars);
     } else {
         res.redirect('/login');
@@ -119,24 +139,27 @@ app.get('/urls/:id', (req, res) => {
     // const longURL = urlDatabase[shortURL];
     // let templateVars = { shortURL: shortURL, longURL: longURL };
     let userId = req.cookies["userId"]
-
     let templateVars = {
         shortURL: req.params.id,
         longURL: urlDatabase[req.params.id],
-        urls: urlDatabase,      // TODO: delete this line?
+        urls: urlDatabase, // TODO: delete this line?
         user: userDatabase[userId],
     };
-    res.render('urls_show', templateVars);
+
+    if (userId) {
+        res.render('urls_show', templateVars);
+    } else {
+        res.redirect('/login');
+    }
+
 });
 
 //Route Handler: posts the new shortURL and longURL data on the /urls page.
-//We need to define the route that will match this POST request and handle it. Let's start with a simple definition that logs the request body and gives a dummy response.
 app.post('/urls', (req, res) => {
     var shortURL = generateRandomString();
     var longURL = req.body.longURL;
     urlDatabase[shortURL] = longURL;
     res.redirect('/urls');
-    // console.log(urlDatabase);
 });
 
 //redirect to a new page (the acutal URL page) using the shortURL
@@ -175,7 +198,7 @@ app.post('/urls/:id', (req, res) => {
 // POST route for logout
 app.post('/logout', function (req, res) {
     // Must include a clear cookie in order to remove the username
-    res.clearCookie("userId"); 
+    res.clearCookie("userId");
     res.redirect('/login');
 });
 
@@ -201,7 +224,8 @@ app.post('/register', function (req, res) {
     //this sets up my database with the new randomUserId, and pulls the value  req.body.whatever into the appropriate keys.
     userDatabase[randomUserId] = {
         userId: randomUserId,
-        email: req.body['email'], /* this could be req.body.email i think */
+        email: req.body['email'],
+        /* this could be req.body.email i think */
         password: req.body['password']
     }
     //the cookie only needs to apply to my randomUserId since that is th object that contains the key value pairs I am looking for.
@@ -240,11 +264,11 @@ app.post('/login', function (req, res) {
                 res.cookie("userId", userId);
                 res.redirect('/urls');
                 return;
-            } 
-        } 
+            }
+        }
         res.status(400);
         res.send('Your password and username do not match.');
-    } 
+    }
 
 });
 
