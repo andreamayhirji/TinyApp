@@ -240,11 +240,11 @@ app.get('/register', function (req, res) {
 // POST route for once register button has been clicke, redirect to /urls
 app.post('/register', function (req, res) {
     // this is guarding my code, I'm first checking if the data is good data.
-    if (req.body['email'] === "" || req.body['password'] === '') {
+    if (req.body.email === "" || req.body.password === '') {
         res.status(400).send('You need to enter an email address and a password.');
         return;
     }
-    if (checkEmail(req.body['email'])) {
+    if (checkEmail(req.body.email)) {
         res.status(400).send('This email has already been registered.');
         return;
     }
@@ -255,7 +255,7 @@ app.post('/register', function (req, res) {
     let hashedPassword = bcrypt.hashSync(password, 10);
     userDatabase[randomUserId] = {
         userId: randomUserId,
-        email: req.body.email, /* TODO: this could be req.body.email i think */
+        email: req.body.email, 
         password: hashedPassword
     }
 
