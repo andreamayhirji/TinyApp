@@ -1,5 +1,6 @@
 var express = require('express');
 var app = express();
+const bcrypt = require('bcrypt');
 
 var cookieParser = require('cookie-parser');
 app.use(cookieParser());
@@ -16,10 +17,6 @@ app.use(bodyParser.urlencoded({
 
 //This tells the Express app to use EJS as its templating engine.
 app.set('view engine', 'ejs');
-
-const bcrypt = require('bcrypt');
-// const password = "purple-monkey-dinosaur"; // you will probably this from req.params
-// const hashedPassword = bcrypt.hashSync(password, 10);
 
 
 
@@ -85,17 +82,17 @@ const userDatabase = {
     'user1RandomId': {
         userId: 'user1RandomId',
         email: 'user@example.com',
-        password: 'purple-monkey-dinosaur'
+        password: bcrypt.hashSync('purple-monkey-dinosaur', 10)
     },
     'user2RandomId': {
         userId: 'user2RandomId',
         email: 'user2@example.com',
-        password: 'dishwasher-funk'
+        password: bcrypt.hashSync('dishwasher-funk', 10)
     },
     'boDVdD': {
         userId: 'boDVdD',
         email: 'andrea@andrea.com',
-        password: '1234'
+        password: bcrypt.hashSync('1234', 10)
     }
 };
 
@@ -123,7 +120,8 @@ app.post('/urls', (req, res) => {
     var longURL = req.body.longURL;
     urlDatabase[shortURL] = {
         shortURL: shortURL,
-        longURL: req.body.longURL,
+        // longURL: req.body.longURL,
+        longURL: longURL,
         userId: req.cookies.userId
     }
     // console.log('!!!', urlDatabase[shortURL])
