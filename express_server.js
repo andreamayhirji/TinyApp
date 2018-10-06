@@ -17,6 +17,13 @@ app.use(bodyParser.urlencoded({
 //This tells the Express app to use EJS as its templating engine.
 app.set('view engine', 'ejs');
 
+const bcrypt = require('bcrypt');
+const password = "purple-monkey-dinosaur"; // you will probably this from req.params
+const hashedPassword = bcrypt.hashSync(password, 10);
+
+
+
+/* -------------------FUNCTIONS--------------------*/
 // TODO: refactor this code to use Math.random.splice()etc
 //Referenced this code from https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
 function generateRandomString() {
@@ -57,8 +64,8 @@ function urlsForUser(userId) {
 // }
 
 
-/* **************** DATABASES ************* */
-//urlDatabase is an object.
+/* -------------------databases--------------------*/
+
 var urlDatabase = {
     'b2xVn2': {
         longURL: 'http://www.lighthouselabs.ca',
@@ -74,7 +81,6 @@ var urlDatabase = {
     }
 }
 
-//user database is an object
 const userDatabase = {
     'user1RandomId': {
         userId: 'user1RandomId',
@@ -93,7 +99,7 @@ const userDatabase = {
     }
 };
 
-/* *********** ADDING ROUTES *********** */
+/* -------------------routes--------------------*/
 
 //route handle for /urls, using the urlDatabase object.
 app.get('/urls', (req, res) => {
@@ -245,13 +251,14 @@ app.post('/register', function (req, res) {
     // once the above two return false, I can do the normal thing below.
     // I know my data is good, so I can perform the function.
     let randomUserId = generateRandomString();
-    //this sets up my database with the new randomUserId, and pulls the value  req.body.whatever into the appropriate keys.
+    let password = req.body.password;
+    let hashedPassword = bcrypt.hashSync(password, 10);
     userDatabase[randomUserId] = {
         userId: randomUserId,
-        email: req.body['email'],
-        /* this could be req.body.email i think */
-        password: req.body['password']
+        email: req.body.email, /* TODO: this could be req.body.email i think */
+        password: hashedPassword
     }
+
     //the cookie only needs to apply to my randomUserId since that is th object that contains the key value pairs I am looking for.
     res.cookie('userId', randomUserId);
     res.redirect('/urls');
