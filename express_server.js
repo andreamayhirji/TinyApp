@@ -18,8 +18,8 @@ app.use(bodyParser.urlencoded({
 app.set('view engine', 'ejs');
 
 const bcrypt = require('bcrypt');
-const password = "purple-monkey-dinosaur"; // you will probably this from req.params
-const hashedPassword = bcrypt.hashSync(password, 10);
+// const password = "purple-monkey-dinosaur"; // you will probably this from req.params
+// const hashedPassword = bcrypt.hashSync(password, 10);
 
 
 
@@ -255,10 +255,9 @@ app.post('/register', function (req, res) {
     let hashedPassword = bcrypt.hashSync(password, 10);
     userDatabase[randomUserId] = {
         userId: randomUserId,
-        email: req.body.email, 
+        email: req.body.email,
         password: hashedPassword
     }
-
     //the cookie only needs to apply to my randomUserId since that is th object that contains the key value pairs I am looking for.
     res.cookie('userId', randomUserId);
     res.redirect('/urls');
@@ -288,8 +287,9 @@ app.post('/login', function (req, res) {
         res.send('You have to enter an email and a password');
         return;
     } else {
+        //if (userDatabase[userId].password === password && userDatabase[userId].email === email)
         for (let userId in userDatabase) {
-            if (userDatabase[userId].password === password && userDatabase[userId].email === email) {
+            if (userDatabase[userId].email === email && bcrypt.compareSync(password, userDatabase[userId].password)) {
                 res.cookie("userId", userId);
                 res.redirect('/urls');
                 return;
@@ -308,8 +308,7 @@ app.post('/login', function (req, res) {
 // });
 
 
-
-/* ***************** Reference code ************** */
+/*-------------------------for learning----------------------- */
 // app.get() is a function!
 app.get('/', (req, res) => {
     //  ^ registers a handler on the root path '/'     
