@@ -111,6 +111,21 @@ app.get('/urls', (req, res) => {
     }
 });
 
+//Route Handler: posts the new shortURL and longURL data on the /urls page.
+app.post('/urls', (req, res) => {
+    var shortURL = generateRandomString();
+    var longURL = req.body.longURL;
+    urlDatabase[shortURL] = {
+        shortURL: shortURL,
+        longURL: req.body.longURL,
+        userId: req.cookies.userId
+    }
+    // console.log('!!!', urlDatabase[shortURL])
+    res.redirect('/urls');
+});
+
+
+
 //Route Handler --> renders the form to generate a new shortURL by entering in a long url.
 //in case of overlap, routes should be ordered from most specific to least specific.
 //this has to be above /url/:id
@@ -118,7 +133,7 @@ app.get('/urls/new', (req, res) => {
 
     let userId = req.cookies["userId"]
     let templateVars = {
-        urls: urlDatabase,
+        // urls: urlDatabase,
         user: userDatabase[userId],
     };
     if (userId) {
@@ -129,6 +144,8 @@ app.get('/urls/new', (req, res) => {
 });
 
 
+
+
 //route handle for /urls/:id
 app.get('/urls/:id', (req, res) => {
     // previous way of writing this code:
@@ -137,8 +154,8 @@ app.get('/urls/:id', (req, res) => {
     // let templateVars = { shortURL: shortURL, longURL: longURL };
     let userId = req.cookies["userId"]
     let userSpecificURLDatabase = (urlsForUser(userId));
-    
-    if(userSpecificURLDatabase[req.params.id] === undefined){
+
+    if (userSpecificURLDatabase[req.params.id] === undefined) {
         res.send('You do not have access to this page. Sorry!');
     }
 
@@ -153,17 +170,19 @@ app.get('/urls/:id', (req, res) => {
     } else {
         res.send('You must login in to view this page');
     }
-    console.log('urls', userSpecificURLDatabase);
 });
 
 
-//Route Handler: posts the new shortURL and longURL data on the /urls page.
-app.post('/urls', (req, res) => {
-    var shortURL = generateRandomString();
-    var longURL = req.body.longURL;
-    urlDatabase[shortURL] = longURL;
-    res.redirect('/urls');
-});
+// //Route Handler: posts the new shortURL and longURL data on the /urls page.
+// app.post('/urls', (req, res) => {
+
+// // This is not working. new urls are not being posted now that it is user specific.
+
+//     var shortURL = generateRandomString();
+//     var longURL = req.body.longURL;
+//     urlDatabase[shortURL] = longURL;
+//     res.redirect('/urls');
+// });
 
 //redirect to a new page (the acutal URL page) using the shortURL
 app.get('/u/:shortURL', (req, res) => {
