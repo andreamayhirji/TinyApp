@@ -12,7 +12,7 @@
 <% for(var url in urls) { %>
 <li style="padding:10px;">
   <%= url%> &rarr; <a href=  <%= urls[url].longURL %>  ><%= urls[url].longURL  %></a>
-  <a style="margin:10px;" href= "/urls/<%= url %>">Update</a>
+  <a style="margin:10px;" href= "/urls/<%= url %>">Edit</a>
   <form style="display: inline-block;" method="POST" action="/urls/<%=url %>/delete"> 
   <button type = "submit">delete</button>
 </form> 

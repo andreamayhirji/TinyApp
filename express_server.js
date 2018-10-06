@@ -56,7 +56,6 @@ var urlDatabase = {
                 userId: 'user1RandomId'}
 }
 
-
 //user database is an object
 const userDatabase = {
     'user1RandomId': {
@@ -85,7 +84,6 @@ app.get('/urls', (req, res) => {
 
     let templateVars = {
         urls: urlDatabase,
-        // urlUserSpecific: urls.userId,
         user: userDatabase[userId]
     };
     // console.log('user:', templateVars.user);
@@ -168,7 +166,8 @@ app.post('/urls/:id', (req, res) => {
 
     let longURL = req.body.longURL;
     let shortURL = req.params.id;
-    urlDatabase[shortURL] = longURL;
+    //TODO: this does not post the updated URL
+    urlDatabase[shortURL].longURL = longURL;
     res.redirect('/urls');
 });
 
@@ -176,7 +175,7 @@ app.post('/urls/:id', (req, res) => {
 // POST route for logout
 app.post('/logout', function (req, res) {
     // Must include a clear cookie in order to remove the username
-    res.clearCookie("userId"); /* changed "username" to "userId" */
+    res.clearCookie("userId"); 
     res.redirect('/login');
 });
 
@@ -221,17 +220,14 @@ app.get('/login', function (req, res) {
     };
 
     res.render('login', templateVars);
-    // console.log('hey');
 });
 
 // POST route for /login page (also store the username in cookies)
 app.post('/login', function (req, res) {
     // res.cookie("userId", req.body.username); 
-    //?
     let email = req.body.email;
     let password = req.body.password;
-
-    console.log("req.body", req.body);
+    // console.log("req.body", req.body);
 
     if (password === '' || email === '') {
         console.error('no way');
