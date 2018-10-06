@@ -35,7 +35,6 @@ function checkEmail(email) {
             return true;
         }
     }
-    //REMINDER: return goes outside of the for in loop to ensure the for in loop keeps running.
     return false;
 }
 
@@ -105,9 +104,9 @@ app.get('/urls', (req, res) => {
             user: userDatabase[userId]
         };
         res.render('urls_index', templateVars);
-    }  else {
-    res.send('You must login in to view this page');
-}
+    } else {
+        res.send('You must login in to view this page');
+    }
 });
 
 //Route Handler --> renders the form to generate a new shortURL by entering in a long url.
@@ -135,20 +134,26 @@ app.get('/urls/:id', (req, res) => {
     // const longURL = urlDatabase[shortURL];
     // let templateVars = { shortURL: shortURL, longURL: longURL };
     let userId = req.cookies["userId"]
-    let templateVars = {
-        shortURL: req.params.id,
-        longURL: urlDatabase[req.params.id],
-        //urls: urlDatabase, // TODO: delete this line?
-        user: userDatabase[userId],
-    };
-
-    if (userId) {
-        res.render('urls_show', templateVars);
-    } else {
-        res.redirect('/login');
+    let userSpecificURLDatabase = (urlsForUser(userId));
+    
+    if(userSpecificURLDatabase[req.params.id] === undefined){
+        res.send('You do not have access to this page. Sorry!');
     }
 
+    if (userId) {
+        let templateVars = {
+            shortURL: req.params.id,
+            urls: userSpecificURLDatabase,
+            longURL: userSpecificURLDatabase[req.params.id].longURL,
+            user: userDatabase[userId],
+        };
+        res.render('urls_show', templateVars);
+    } else {
+        res.send('You must login in to view this page');
+    }
+    console.log('urls', userSpecificURLDatabase);
 });
+
 
 //Route Handler: posts the new shortURL and longURL data on the /urls page.
 app.post('/urls', (req, res) => {

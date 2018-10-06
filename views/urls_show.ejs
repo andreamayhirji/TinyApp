@@ -8,7 +8,8 @@
     </head>
     <body>
         <h1>This is a long url and the shortened form</h1>
-        <p><strong><%=shortURL %>:</strong> <a href= "<%=urls[shortURL].longURL %>" ><%=urls[shortURL].longURL %></a></p>
+        
+        <p><strong><%=shortURL %>:</strong> <a href= "<%=longURL %>" ><%=urls[shortURL].longURL %></a></p>
  
         <h1>ShortURL: <%=shortURL %>  </h1>
         <form action="/urls/<%= shortURL %>" method="POST" >
