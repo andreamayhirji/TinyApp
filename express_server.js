@@ -50,6 +50,8 @@ function urlsForUser(userId) {
 }
 
 
+
+
 // let getUser = function (req) {
 //     return userDatabase[req.cookies["userId"]]
 // }
@@ -167,9 +169,11 @@ app.post('/urls', (req, res) => {
 app.get('/u/:shortURL', (req, res) => {
     //TODO: shortURL is not working, returns undefined.
     var shortURL = req.params.shortURL;
-    var longURL = urlDatabase[shortURL];
+    var longURL = urlDatabase[shortURL].longURL;
     res.redirect(longURL);
 });
+
+
 
 // POST route that removes a URL resource and redirects to the urls page with the removed target id.
 // delete action
