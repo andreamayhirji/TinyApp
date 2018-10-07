@@ -1,34 +1,22 @@
 var express = require('express');
 var app = express();
 const bcrypt = require('bcrypt');
-
-// var cookieParser = require('cookie-parser');
-// app.use(cookieParser());
-
 var cookieSession = require('cookie-session');
 app.use(cookieSession({
-    // keys: ['key1', 'key2'],
     keys: ['secret-secret'],
     name: 'session'
 }));
-
 var PORT = 8080; //default port 8080
-
 const bodyParser = require('body-parser');
-//body-parser converts the body of data into an object.
-// comes in as req = a=b&x=y 
-//conversts to an object req = { "a":b, "x": y }
 app.use(bodyParser.urlencoded({
     extended: true
 }));
 
-//This tells the Express app to use EJS as its templating engine.
 app.set('view engine', 'ejs');
 
 
 
 /* -------------------FUNCTIONS--------------------*/
-// TODO: refactor this code to use Math.random.splice()etc
 //Referenced this code from https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
 function generateRandomString() {
     var string = '';
@@ -64,7 +52,7 @@ function urlsForUser(userId) {
 
 
 // let getUser = function (req) {
-//     return userDatabase[req.cookies["userId"]]
+//     return userDatabase[req.session.userId]]
 // }
 
 
@@ -108,7 +96,6 @@ const userDatabase = {
 //route handle for /urls, using the urlDatabase object.
 app.get('/urls', (req, res) => {
     let userId = req.session.userId
-    // let userId = req.cookies.userId
     if (userId) {
         let userSpecificURLDatabase = (urlsForUser(userId));
         let templateVars = {
@@ -130,22 +117,17 @@ app.post('/urls', (req, res) => {
         // longURL: req.body.longURL,
         longURL: longURL,
         userId: req.session.userId
-        // userId: req.cookies.userId
     }
-    // console.log('!!!', urlDatabase[shortURL])
     res.redirect('/urls');
 });
 
 
 
 //Route Handler --> renders the form to generate a new shortURL by entering in a long url.
-//in case of overlap, routes should be ordered from most specific to least specific.
 //this has to be above /url/:id
 app.get('/urls/new', (req, res) => {
     let userId = req.session.userId
-    // let userId = req.cookies.userId
     let templateVars = {
-        // urls: urlDatabase,
         user: userDatabase[userId],
     };
     if (userId) {
@@ -155,18 +137,13 @@ app.get('/urls/new', (req, res) => {
     }
 });
 
-
-
-
 //route handle for /urls/:id
 app.get('/urls/:id', (req, res) => {
     // previous way of writing this code:
     // const shortURL = req.params.shortURL;
     // const longURL = urlDatabase[shortURL];
     // let templateVars = { shortURL: shortURL, longURL: longURL };
-
     let userId = req.session.userId
-    // let userId = req.cookies.userId
     let userSpecificURLDatabase = (urlsForUser(userId));
 
     if (userSpecificURLDatabase[req.params.id] === undefined) {
@@ -188,16 +165,6 @@ app.get('/urls/:id', (req, res) => {
 
 
 // //Route Handler: posts the new shortURL and longURL data on the /urls page.
-// app.post('/urls', (req, res) => {
-
-// // This is not working. new urls are not being posted now that it is user specific.
-
-//     var shortURL = generateRandomString();
-//     var longURL = req.body.longURL;
-//     urlDatabase[shortURL] = longURL;
-//     res.redirect('/urls');
-// });
-
 //redirect to a new page (the acutal URL page) using the shortURL
 app.get('/u/:shortURL', (req, res) => {
 //TODO: shortURL is not working, returns undefined.
@@ -206,8 +173,6 @@ app.get('/u/:shortURL', (req, res) => {
     var longURL = urlDatabase[shortURL].longURL;
     res.redirect(longURL);
 });
-
-
 
 // POST route that removes a URL resource and redirects to the urls page with the removed target id.
 // delete action
@@ -228,8 +193,6 @@ app.post('/urls/:id', (req, res) => {
 
     let longURL = req.body.longURL;
     let shortURL = req.params.id;
-    //TODO: this does not post the updated URL
-    //I THINK I ALREADY DID THIS.
     urlDatabase[shortURL].longURL = longURL;
     res.redirect('/urls');
 });
@@ -270,10 +233,7 @@ app.post('/register', function (req, res) {
         password: hashedPassword
     }
     req.session.userId = randomUserId;
-    //the cookie only needs to apply to my randomUserId since that is th object that contains the key value pairs I am looking for.
 
-    //TODO: req.session.userId OR res.session.userId
-    // res.cookie('userId', randomUserId);
     res.redirect('/urls');
 
 });
@@ -292,21 +252,17 @@ app.get('/login', function (req, res) {
 
 // POST route for /login page (also store the username in cookies)
 app.post('/login', function (req, res) {
-    // res.cookie("userId", req.body.username); 
     let email = req.body.email;
     let password = req.body.password;
     if (password === '' || email === '') {
-        console.error('no way');
         res.send('You have to enter an email and a password');
         return;
     } else {
-
         for (let userId in userDatabase) {
             console.error('NOOO');
             console.log('first', userDatabase[userId].email === email);
             console.log('second', bcrypt.compareSync(password, userDatabase[userId].password));
             if (userDatabase[userId].email === email && bcrypt.compareSync(password, userDatabase[userId].password)) {
-
                 req.session['userId'] = userId;
                 res.redirect('/urls');
                 return;
