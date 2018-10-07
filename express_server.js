@@ -2,8 +2,15 @@ var express = require('express');
 var app = express();
 const bcrypt = require('bcrypt');
 
-var cookieParser = require('cookie-parser');
-app.use(cookieParser());
+// var cookieParser = require('cookie-parser');
+// app.use(cookieParser());
+
+var cookieSession = require('cookie-session');
+app.use(cookieSession({
+    // keys: ['key1', 'key2'],
+    keys: ['secret-secret'],
+    name: 'session'
+}));
 
 var PORT = 8080; //default port 8080
 
@@ -100,8 +107,8 @@ const userDatabase = {
 
 //route handle for /urls, using the urlDatabase object.
 app.get('/urls', (req, res) => {
-
-    let userId = req.cookies["userId"]
+    let userId = req.session.userId
+    // let userId = req.cookies.userId
     if (userId) {
         let userSpecificURLDatabase = (urlsForUser(userId));
         let templateVars = {
@@ -122,7 +129,8 @@ app.post('/urls', (req, res) => {
         shortURL: shortURL,
         // longURL: req.body.longURL,
         longURL: longURL,
-        userId: req.cookies.userId
+        userId: req.session.userId
+        // userId: req.cookies.userId
     }
     // console.log('!!!', urlDatabase[shortURL])
     res.redirect('/urls');
@@ -134,8 +142,8 @@ app.post('/urls', (req, res) => {
 //in case of overlap, routes should be ordered from most specific to least specific.
 //this has to be above /url/:id
 app.get('/urls/new', (req, res) => {
-
-    let userId = req.cookies["userId"]
+    let userId = req.session.userId
+    // let userId = req.cookies.userId
     let templateVars = {
         // urls: urlDatabase,
         user: userDatabase[userId],
@@ -156,7 +164,9 @@ app.get('/urls/:id', (req, res) => {
     // const shortURL = req.params.shortURL;
     // const longURL = urlDatabase[shortURL];
     // let templateVars = { shortURL: shortURL, longURL: longURL };
-    let userId = req.cookies["userId"]
+
+    let userId = req.session.userId
+    // let userId = req.cookies.userId
     let userSpecificURLDatabase = (urlsForUser(userId));
 
     if (userSpecificURLDatabase[req.params.id] === undefined) {
@@ -190,7 +200,8 @@ app.get('/urls/:id', (req, res) => {
 
 //redirect to a new page (the acutal URL page) using the shortURL
 app.get('/u/:shortURL', (req, res) => {
-    //TODO: shortURL is not working, returns undefined.
+//TODO: shortURL is not working, returns undefined.
+//I THINK I FIXED THIS, CANT REMEMBER.
     var shortURL = req.params.shortURL;
     var longURL = urlDatabase[shortURL].longURL;
     res.redirect(longURL);
@@ -218,6 +229,7 @@ app.post('/urls/:id', (req, res) => {
     let longURL = req.body.longURL;
     let shortURL = req.params.id;
     //TODO: this does not post the updated URL
+    //I THINK I ALREADY DID THIS.
     urlDatabase[shortURL].longURL = longURL;
     res.redirect('/urls');
 });
@@ -226,7 +238,8 @@ app.post('/urls/:id', (req, res) => {
 // POST route for logout
 app.post('/logout', function (req, res) {
     // Must include a clear cookie in order to remove the username
-    res.clearCookie("userId");
+    req.session = null;
+    // res.clearCookie("userId");
     res.redirect('/login');
 });
 
@@ -246,18 +259,21 @@ app.post('/register', function (req, res) {
         res.status(400).send('This email has already been registered.');
         return;
     }
-    // once the above two return false, I can do the normal thing below.
-    // I know my data is good, so I can perform the function.
+
     let randomUserId = generateRandomString();
     let password = req.body.password;
     let hashedPassword = bcrypt.hashSync(password, 10);
+
     userDatabase[randomUserId] = {
         userId: randomUserId,
         email: req.body.email,
         password: hashedPassword
     }
+    req.session.userId = randomUserId;
     //the cookie only needs to apply to my randomUserId since that is th object that contains the key value pairs I am looking for.
-    res.cookie('userId', randomUserId);
+
+    //TODO: req.session.userId OR res.session.userId
+    // res.cookie('userId', randomUserId);
     res.redirect('/urls');
 
 });
@@ -265,7 +281,7 @@ app.post('/register', function (req, res) {
 
 // GET route for /login page 
 app.get('/login', function (req, res) {
-    let userId = req.cookies["userId"]
+    let userId = req.session.userId    
     let templateVars = {
         user: userDatabase,
         userId: userId,
@@ -279,19 +295,22 @@ app.post('/login', function (req, res) {
     // res.cookie("userId", req.body.username); 
     let email = req.body.email;
     let password = req.body.password;
-
     if (password === '' || email === '') {
         console.error('no way');
         res.send('You have to enter an email and a password');
         return;
     } else {
-        //if (userDatabase[userId].password === password && userDatabase[userId].email === email)
+
         for (let userId in userDatabase) {
+            console.error('NOOO');
+            console.log('first', userDatabase[userId].email === email);
+            console.log('second', bcrypt.compareSync(password, userDatabase[userId].password));
             if (userDatabase[userId].email === email && bcrypt.compareSync(password, userDatabase[userId].password)) {
-                res.cookie("userId", userId);
+
+                req.session['userId'] = userId;
                 res.redirect('/urls');
                 return;
-            }
+            } 
         }
         res.status(400);
         res.send('Your password and username do not match.');
