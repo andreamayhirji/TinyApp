@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <title>Login Page</title>
+    <title>Login Page</title>
 </head>
+
 <body style="margin:25px">
     <h1>Welcome to TinyApp</h1>
 
     <% if(userId) { %>
-    <h2>Looks like you are already logged in.</h2>
+    <h3>Looks like you are already logged in.</h3>
     <p style="display: inline-block;">
-        <%= user[userId].email %>
+       <strong> <%= user[userId].email %></strong>
     </p>
 
     <form style="display: inline-block;" action="/logout" method="POST">
@@ -17,8 +19,8 @@
     </form>
 
     <% } else  { %>
-    <p>Please Login</p>
-    <form action="/login" method="POST" >
+    <h3>Login to your account</h3>
+    <form action="/login" method="POST">
         <div style="margin-bottom:10px">
             <label for="email">Email</label>
             <input id="email" type="email" name="email" style="width: 200px">
@@ -26,13 +28,12 @@
         </div>
         <div style="margin-bottom:10px">
             <label for="password">Password</label>
-            <input id="password" type="text" name="password" style="width: 200px">
+            <input id="password" type="password" name="password" style="width: 200px">
         </div>
         <input type="submit" value="Submit">
     </form>
-    <p style="display: inline-block;">Don't have an account?</p>
-    <form style="display: inline-block;" method="GET" action="/register">
-<button type ="submit">Register</button> 
+    <p style="display: inline-block;">Don't have an account yet? <strong><a href="/register">Register a new account</a></strong></p>
+
     <% };%>
 
 

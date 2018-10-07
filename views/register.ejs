@@ -8,11 +8,11 @@
 
 <body style="margin:25px">
     <h1>Register for TinyApp</h1>
-    <p>If you do not have an account, please register.</p>
+    <h3>Please enter your email and create a password.</h3>
     <form action="/register" method="POST">
 
         <div style="margin-bottom:10px">
-            <label for="email">Email Address</label>
+            <label for="email">Email</label>
             <input id="email" type="email" name="email" style="width: 200px">
         </div>
         <div style="margin-bottom:10px">    
@@ -23,10 +23,7 @@
             <input type="submit" value="Register">
         </div>
     </form>
-    <p style="display: inline-block;">Already made an account?</p>
-    <form style="display: inline-block;" method="GET" action="/login">
-<button type ="submit">Login</button> 
-
+    <p style="display: inline-block;">Already made an account? <strong><a href="/login">Login to your account</a></strong></p>
 </body>
 
 </html>

@@ -8,7 +8,7 @@
 <h1>TinyApp</h1>
     <% if(user) { %>
     <p style="display: inline-block;">You are logged in as: 
-    <%=  user.email %>
+    <strong><%=  user.email %></strong>
     </p>
 
     <form style="display: inline-block;" action="/logout" method="POST">
