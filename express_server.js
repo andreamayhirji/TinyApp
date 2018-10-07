@@ -15,7 +15,7 @@ app.set('view engine', 'ejs');
 
 
 
-/* -------------------FUNCTIONS--------------------*/
+/* -------------------functions--------------------*/
 //Referenced this code from https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
 function generateRandomString() {
     var string = '';
@@ -34,7 +34,7 @@ function checkEmail(email) {
         }
     }
     return false;
-}
+};
 
 // Function to filter the urlDatabase and compare with the userId to the logged-in user's ID.
 function urlsForUser(userId) {
@@ -45,11 +45,9 @@ function urlsForUser(userId) {
         }
     }
     return urlsUserList;
-}
+};
 
-// let getUser = function (req) {
-//     return userDatabase[req.session.userId]]
-// }
+
 
 /* -------------------databases--------------------*/
 
@@ -66,7 +64,7 @@ var urlDatabase = {
         longURL: 'http://microsoft.com',
         userId: 'user1RandomId'
     }
-}
+};
 
 const userDatabase = {
     'user1RandomId': {
@@ -109,7 +107,6 @@ app.post('/urls', (req, res) => {
     var longURL = req.body.longURL;
     urlDatabase[shortURL] = {
         shortURL: shortURL,
-        // longURL: req.body.longURL,
         longURL: longURL,
         userId: req.session.userId
     }
@@ -134,10 +131,7 @@ app.get('/urls/new', (req, res) => {
 
 //route handle for /urls/:id
 app.get('/urls/:id', (req, res) => {
-    // previous way of writing this code:
-    // const shortURL = req.params.shortURL;
-    // const longURL = urlDatabase[shortURL];
-    // let templateVars = { shortURL: shortURL, longURL: longURL };
+
     let userId = req.session.userId
     let userSpecificURLDatabase = (urlsForUser(userId));
 
@@ -162,8 +156,7 @@ app.get('/urls/:id', (req, res) => {
 // //Route Handler: posts the new shortURL and longURL data on the /urls page.
 //redirect to a new page (the acutal URL page) using the shortURL
 app.get('/u/:shortURL', (req, res) => {
-    //TODO: shortURL is not working, returns undefined.
-    //I THINK I FIXED THIS, CANT REMEMBER.
+
     var shortURL = req.params.shortURL;
     var longURL = urlDatabase[shortURL].longURL;
     res.redirect(longURL);
@@ -265,31 +258,18 @@ app.post('/login', function (req, res) {
 
 });
 
-// // POST route to store the username in cookies 
-// app.post('/login', function (req, res) {
-//     res.cookie("userId", req.body.username); 
-//     res.redirect('/urls');
-// });
-
-
-/*-------------------------for learning----------------------- */
-// app.get() is a function!
 app.get('/', (req, res) => {
-    //  ^ registers a handler on the root path '/'     
     res.send('Hello!');
 });
 
-//route handle for /urls.json
 app.get('/urls.json', (req, res) => {
     res.json(urlDatabase);
 });
 
-//sending HTML and adding another route
 app.get('/hello', (req, res) => {
     res.send('<html><body>Hello <b>World</b></body></html>\n');
 });
 
-//required on all server files.
 app.listen(PORT, () => {
     console.log(`Example app listening on port ${PORT}!`);
 });
