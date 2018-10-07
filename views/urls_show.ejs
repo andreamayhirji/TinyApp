@@ -2,22 +2,24 @@
 
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <% include partials/_header %>
-        <title>TinyApp</title>
-    </head>
-    <body>
-        <h1>This is a long url and the shortened form</h1>
-        
-        <p><strong><%=shortURL %>:</strong> <a href= "<%=longURL %>" ><%=urls[shortURL].longURL %></a></p>
- 
-        <h1>ShortURL: <%=shortURL %>  </h1>
-        <form action="/urls/<%= shortURL %>" method="POST" >
-        <label for="longURL">Update a URL:</label>
+
+<head>
+    <% include partials/_header %>
+    <title>Short URL details</title>
+</head>
+
+<body style="margin:25px">
+    <h3>This is your short URL</h3>
+    <p><strong>
+            <%=shortURL %></strong> is currently associated with <strong><a href="<%=longURL %>">
+                <%=urls[shortURL].longURL %></a></strong></p>
+    <h3>Update your URL</h3>
+    <form action="/urls/<%= shortURL %>" method="POST">
+        <label for="longURL">Enter a new URL: </label>
         <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 300px">
         <input type="submit" value="Submit">
-      </form>
+    </form>
 
-    </body>
+</body>
+
 </html>
-

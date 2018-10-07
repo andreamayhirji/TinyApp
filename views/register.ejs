@@ -3,27 +3,29 @@
 <html lang="en">
 
 <head>
-    <title>Register for TinyApp</title>
+    <title>Register</title>
 </head>
 
-<body>
+<body style="margin:25px">
     <h1>Register for TinyApp</h1>
+    <p>If you do not have an account, please register.</p>
+    <form action="/register" method="POST">
 
-
-    <form action="/register" method="POST" style="padding:10px">
-
-        <div style="margin:10px">
+        <div style="margin-bottom:10px">
             <label for="email">Email Address</label>
             <input id="email" type="email" name="email" style="width: 200px">
         </div>
-        <div style="margin:10px">    
+        <div style="margin-bottom:10px">    
             <label for="password">Password</label>
             <input id="password" type="password" name="password" style="width: 200px">
         </div>
-        <div style="margin:10px">
+        <div>
             <input type="submit" value="Register">
         </div>
     </form>
+    <p style="display: inline-block;">Already made an account?</p>
+    <form style="display: inline-block;" method="GET" action="/login">
+<button type ="submit">Login</button> 
 
 </body>
 

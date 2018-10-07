@@ -5,9 +5,9 @@
 </header>
 
 <body>
-
+<h1>TinyApp</h1>
     <% if(user) { %>
-    <p style="display: inline-block;">
+    <p style="display: inline-block;">You are logged in as: 
     <%=  user.email %>
     </p>
 
@@ -15,7 +15,7 @@
         <input name="logout" type="submit" value="logout">
     </form>
     <% } else  { %>
-    <p><a href="/login">Login</a> or if you are not yet a user, <a href="/register">Register</a></p>
+    <p>Please<a href="/login">Login</a>. If you are not yet a user, please <a href="/register">Register</a></p>
 
     <% };%>
 

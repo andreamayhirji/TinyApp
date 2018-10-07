@@ -1,7 +1,13 @@
-<body>
-    <h1>Login to TinyApp</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Login Page</title>
+</head>
+<body style="margin:25px">
+    <h1>Welcome to TinyApp</h1>
 
     <% if(userId) { %>
+    <h2>Looks like you are already logged in.</h2>
     <p style="display: inline-block;">
         <%= user[userId].email %>
     </p>
@@ -11,20 +17,24 @@
     </form>
 
     <% } else  { %>
-    <form action="/login" method="POST">
-        <div style="margin:10px">
+    <p>Please Login</p>
+    <form action="/login" method="POST" >
+        <div style="margin-bottom:10px">
             <label for="email">Email</label>
             <input id="email" type="email" name="email" style="width: 200px">
 
         </div>
-        <div style="margin:10px">
+        <div style="margin-bottom:10px">
             <label for="password">Password</label>
             <input id="password" type="text" name="password" style="width: 200px">
         </div>
         <input type="submit" value="Submit">
     </form>
-
+    <p style="display: inline-block;">Don't have an account?</p>
+    <form style="display: inline-block;" method="GET" action="/register">
+<button type ="submit">Register</button> 
     <% };%>
+
 
 
 </body>

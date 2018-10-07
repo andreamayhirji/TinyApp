@@ -1,17 +1,16 @@
 var express = require('express');
 var app = express();
+var PORT = 8080;
 const bcrypt = require('bcrypt');
 var cookieSession = require('cookie-session');
 app.use(cookieSession({
     keys: ['secret-secret'],
     name: 'session'
 }));
-var PORT = 8080; //default port 8080
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({
     extended: true
 }));
-
 app.set('view engine', 'ejs');
 
 
@@ -48,13 +47,9 @@ function urlsForUser(userId) {
     return urlsUserList;
 }
 
-
-
-
 // let getUser = function (req) {
 //     return userDatabase[req.session.userId]]
 // }
-
 
 /* -------------------databases--------------------*/
 
@@ -167,8 +162,8 @@ app.get('/urls/:id', (req, res) => {
 // //Route Handler: posts the new shortURL and longURL data on the /urls page.
 //redirect to a new page (the acutal URL page) using the shortURL
 app.get('/u/:shortURL', (req, res) => {
-//TODO: shortURL is not working, returns undefined.
-//I THINK I FIXED THIS, CANT REMEMBER.
+    //TODO: shortURL is not working, returns undefined.
+    //I THINK I FIXED THIS, CANT REMEMBER.
     var shortURL = req.params.shortURL;
     var longURL = urlDatabase[shortURL].longURL;
     res.redirect(longURL);
@@ -241,7 +236,7 @@ app.post('/register', function (req, res) {
 
 // GET route for /login page 
 app.get('/login', function (req, res) {
-    let userId = req.session.userId    
+    let userId = req.session.userId
     let templateVars = {
         user: userDatabase,
         userId: userId,
@@ -259,14 +254,11 @@ app.post('/login', function (req, res) {
         return;
     } else {
         for (let userId in userDatabase) {
-            console.error('NOOO');
-            console.log('first', userDatabase[userId].email === email);
-            console.log('second', bcrypt.compareSync(password, userDatabase[userId].password));
             if (userDatabase[userId].email === email && bcrypt.compareSync(password, userDatabase[userId].password)) {
                 req.session['userId'] = userId;
                 res.redirect('/urls');
                 return;
-            } 
+            }
         }
         res.status(400);
         res.send('Your password and username do not match.');

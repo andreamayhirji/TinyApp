@@ -6,9 +6,9 @@
   <title>TinyApp</title>
 <% include partials/_header %>
 </head>
-<body>
+<body style="margin:25px">
    <!-- Add your EJS code here -->
-<h1>These are my shortened URLs with the corresponding long URLs</h1>
+<h2>My URLs</h2>
 <% for(var url in urls) { %>
 <li style="padding:10px;">
   <%= url%> &rarr; <a href=  <%= urls[url].longURL %>  ><%= urls[url].longURL  %></a>
@@ -18,7 +18,9 @@
 </form> 
 </li>
 <% }; %>
-
+<!-- <p><a href="/urls/new">Make a new shortURL</a></p> -->
+<form style="display: inline-block;" method="GET" action="/urls/new">
+<button type ="submit">Make a new shortURL</button>
 
 </body>
 </html> 
